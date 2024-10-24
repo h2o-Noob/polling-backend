@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hi</h1>
+    <script>
+        // Create a new WebSocket connection
+        const socket = new WebSocket('ws://localhost:8081'); // Adjust the URL if your WebSocket server is hosted elsewhere
+
+        // Event listener for when the connection is opened
+        socket.addEventListener('open', function(event) {
+            console.log('Hello Server')
+        })
+        socket.addEventListener('message', function(event) {
+            console.log('Message from server', event.data)
+        })
+        const sendMessage = () => {
+            socket.send('Hello from Client1')
+        }
+    </script>
+</body>
+</html>

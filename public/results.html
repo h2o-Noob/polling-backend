@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .result {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Poll Results</h1>
+    <div id="poll-results"></div>
+
+    <script>
+        const pollId = new URLSearchParams(window.location.search).get('pollId'); // Get pollId from query params
+        if (!pollId) {
+            document.getElementById('poll-results').textContent = 'No poll ID provided!';
+        } else {
+            // Function to render poll results on the page
+            function renderPollResults(results) {
+                const resultsDiv = document.getElementById('poll-results');
+                resultsDiv.innerHTML = `<h2>${results[0].poll_title}</h2>`; // Poll title
+
+                results.forEach(result => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.classList.add('result');
+                    optionDiv.textContent = `${result.option_name}: ${result.vote_count} votes`;
+                    resultsDiv.appendChild(optionDiv);
+                });
+            }
+
+            // Fetch the initial poll results when the page loads
+            async function getPollResults() {
+                try {
+                    const response = await fetch(`/polls/${pollId}`);
+                    const results = await response.json();
+                    renderPollResults(results);
+                } catch (error) {
+                    console.error('Error fetching poll results:', error);
+                }
+            }
+
+            // Call the function to fetch the initial poll results on page load
+            getPollResults();
+
+            // WebSocket connection to receive real-time updates
+            const ws = new WebSocket('ws://localhost:8081');
+
+            ws.onopen = () => {
+                console.log('WebSocket connection opened');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.pollId == pollId) {
+                    console.log('Received updated poll results:', data.updatedResults);
+                    renderPollResults(data.updatedResults);  // Update the poll results in real-time
+                }
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket connection closed');
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+    </script>
+</body>
+</html>
