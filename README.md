@@ -2,6 +2,8 @@
 
 This project implements a real-time polling system using WebSockets, Kafka, and Express.js. Users can create polls, cast votes, and see real-time results.
 
+Watch this video to checkout realtime update feature https://drive.google.com/file/d/1FGoD02PIPD2sXRtqXfBndbp_n4X0tGTZ/view?usp=drivesdk
+
 ## Table of Contents
 - [Features](#features)
 - [Technologies Used](#technologies-used)
